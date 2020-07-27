@@ -87,7 +87,7 @@ func update(w http.ResponseWriter, r *http.Request) {
 
 	jsonMap := make(map[string](interface{}))
 	byteBody, _ := ioutil.ReadAll(r.Body)
-	err = json.Unmarshal([]byte(byteBody), &jsonMap)
+	err := json.Unmarshal([]byte(byteBody), &jsonMap)
 	if err != nil {
 		log.Println("Error in json")
 	}
