@@ -106,9 +106,13 @@ func update(w http.ResponseWriter, r *http.Request) {
 	if site == "Twitter" {
 		id, _ := strconv.ParseInt(parse_twitter_url(text), 10, 64)
 		url := download_twitter(id)
-		log.Printf("Output URL : %s", url)
 		payload.Set("text", url)
-		http.PostForm(URL+"sendMessage", payload)
+		resp, errr := http.PostForm(URL+"sendMessage", payload)
+		if errr != nil {
+			log.Fatal(errr)
+		}
+		log.Println(resp.StatusCode)
+		log.Printf("Output URL : %s", url)
 	} else if site == "Reddit" {
 		// do something
 	}
