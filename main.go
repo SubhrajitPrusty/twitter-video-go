@@ -75,6 +75,7 @@ func update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Println(r.Form)
+	log.Println(len(r.Form))
 
 	message := r.Form.Get("message")
 	log.Println(message)
