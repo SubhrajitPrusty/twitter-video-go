@@ -38,7 +38,18 @@ func parse_twitter_url(url string) string {
 	return id
 }
 
-func download_twitter(id int64, client *twitter.Client) string {
+func download_twitter(id int64) string {
+
+	consumerKey := os.Getenv("CONSUMER_KEY")
+	consumerSecret := os.Getenv("CONSUMER_SECRET")
+	accessToken := os.Getenv("ACCESS_TOKEN")
+	accessSecret := os.Getenv("ACCESS_SECRET")
+
+	config := oauth1.NewConfig(consumerKey, consumerSecret)
+	token := oauth1.NewToken(accessToken, accessSecret)
+
+	httpClient := config.Client(oauth1.NoContext, token)
+	client := twitter.NewClient(httpClient)
 
 	tweet, _, _ := client.Statuses.Show(id, nil)
 
@@ -92,8 +103,19 @@ func update(w http.ResponseWriter, r *http.Request) {
 	chatMap := messageMap["chat"].(map[string]interface{})
 	chat_id := chatMap["id"]
 	log.Println(chat_id)
-	text := messageMap["text"]
+	text := messageMap["text"].(string)
 	log.Printf("TEXT: %s", text)
+
+	site := is_link(text)
+
+	if site == "Twitter" {
+		id, _ := strconv.ParseInt(parse_twitter_url("text"), 10, 64)
+		// log.Println(id)
+		url := download_twitter(id)
+		log.Println(url)
+	} else if site == "Reddit" {
+		// do something
+	}
 
 }
 
@@ -104,32 +126,11 @@ func main() {
 	}
 
 	PORT := os.Getenv("PORT")
-	log.Println(PORT)
-	consumerKey := os.Getenv("CONSUMER_KEY")
-	consumerSecret := os.Getenv("CONSUMER_SECRET")
-	accessToken := os.Getenv("ACCESS_TOKEN")
-	accessSecret := os.Getenv("ACCESS_SECRET")
 
 	if PORT == "" {
 		PORT = "5000"
 	}
 
-	config := oauth1.NewConfig(consumerKey, consumerSecret)
-	token := oauth1.NewToken(accessToken, accessSecret)
-
-	httpClient := config.Client(oauth1.NoContext, token)
-	client := twitter.NewClient(httpClient)
-
-	site := is_link("sdadas")
-
-	if site == "Twitter" {
-		id, _ := strconv.ParseInt(parse_twitter_url("text"), 10, 64)
-		log.Println(id)
-	} else if site == "Reddit" {
-		// do something
-	}
-
-	log.Println(client)
 	http.HandleFunc("/update", update)
 	http.ListenAndServe(":"+PORT, nil)
 
