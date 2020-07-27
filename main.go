@@ -34,6 +34,7 @@ func is_link(text string) string {
 func parse_twitter_url(url string) string {
 	sp := strings.Split(url, "/")
 	id := strings.Split(sp[len(sp)-1], "?")[0]
+	log.Printf("Str id : %s", id)
 	return id
 }
 
@@ -105,7 +106,8 @@ func update(w http.ResponseWriter, r *http.Request) {
 	site := is_link(text)
 
 	if site == "Twitter" {
-		id, _ := strconv.ParseInt(parse_twitter_url("text"), 10, 64)
+		id, errr := strconv.ParseInt(parse_twitter_url("text"), 10, 64)
+		log.Fatal(errr)
 		log.Printf("Tweet id : %d", id)
 		url := download_twitter(id)
 		log.Printf("Output URL : %s", url)
