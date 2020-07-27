@@ -88,15 +88,11 @@ func update(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("INFO: jsonMap, %s", jsonMap)
 
-	// log.Println(r.Form)
-	log.Println(len(r.Form))
-	log.Println(len(r.PostForm))
-
-	message := r.FormValue("message")
-	log.Println(message)
-	chat_id := r.FormValue("chat_id")
+	messageMap := jsonMap["message"].(map[string]interface{})
+	chat_id := messageMap["chat_id"]
 	log.Println(chat_id)
-	// text := message.Get("text")
+	text := messageMap["text"]
+	log.Printf("TEXT: %s", text)
 
 }
 
