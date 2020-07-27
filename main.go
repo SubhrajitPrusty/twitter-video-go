@@ -75,9 +75,7 @@ func download_twitter(id int64) string {
 		log.Println("No Media")
 	}
 
-	log.Println(url)
 	return url
-
 }
 
 func update(w http.ResponseWriter, r *http.Request) {
@@ -100,16 +98,15 @@ func update(w http.ResponseWriter, r *http.Request) {
 	messageMap := jsonMap["message"].(map[string]interface{})
 	chatMap := messageMap["chat"].(map[string]interface{})
 	chat_id := chatMap["id"]
-	log.Println(chat_id)
+	log.Printf("chat_id: %s", chat_id)
 	text := messageMap["text"].(string)
 
 	site := is_link(text)
 
 	if site == "Twitter" {
 		id, _ := strconv.ParseInt(parse_twitter_url("text"), 10, 64)
-		// log.Println(id)
 		url := download_twitter(id)
-		log.Println(url)
+		log.Printf("Output URL : %s", url)
 	} else if site == "Reddit" {
 		// do something
 	}
