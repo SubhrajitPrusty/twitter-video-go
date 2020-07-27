@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -75,6 +77,17 @@ func update(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error in ParseForm")
 		log.Fatal(err)
 	}
+
+	// try body
+	jsonMap := make(map[string](interface{}))
+	byteBody, _ := ioutil.ReadAll(r.Body)
+	err = json.Unmarshal([]byte(byteBody), &jsonMap)
+	if err != nil {
+		log.Println("Error in json")
+	}
+
+	log.Printf("INFO: jsonMap, %s", jsonMap)
+
 	// log.Println(r.Form)
 	log.Println(len(r.Form))
 	log.Println(len(r.PostForm))
