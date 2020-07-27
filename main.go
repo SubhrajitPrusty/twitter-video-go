@@ -97,11 +97,12 @@ func update(w http.ResponseWriter, r *http.Request) {
 
 	messageMap := jsonMap["message"].(map[string]interface{})
 	chatMap := messageMap["chat"].(map[string]interface{})
-	chat_id := chatMap["id"]
-	log.Printf("chat_id: %s", chat_id)
+	chatID := chatMap["id"]
+	log.Printf("chat_id: %d", chatID)
 	text := messageMap["text"].(string)
 
 	site := is_link(text)
+	log.Println(site)
 
 	if site == "Twitter" {
 		id, _ := strconv.ParseInt(parse_twitter_url("text"), 10, 64)
