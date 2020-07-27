@@ -39,7 +39,6 @@ func parse_twitter_url(url string) string {
 }
 
 func download_twitter(id int64) string {
-	log.Println(id)
 
 	consumerKey := os.Getenv("CONSUMER_KEY")
 	consumerSecret := os.Getenv("CONSUMER_SECRET")
@@ -106,8 +105,7 @@ func update(w http.ResponseWriter, r *http.Request) {
 	site := is_link(text)
 
 	if site == "Twitter" {
-		id, errr := strconv.ParseInt(parse_twitter_url("text"), 10, 64)
-		log.Fatal(errr)
+		id, _ := strconv.ParseInt(parse_twitter_url(text), 10, 64)
 		log.Printf("Tweet id : %d", id)
 		url := download_twitter(id)
 		log.Printf("Output URL : %s", url)
