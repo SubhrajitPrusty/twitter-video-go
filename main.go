@@ -1,0 +1,123 @@
+package main
+
+import (
+	"fmt"
+	"log"
+	"net/http"
+	"net/url"
+	"os"
+	"strconv"
+	"strings"
+
+	"github.com/dghubble/go-twitter/twitter"
+	"github.com/dghubble/oauth1"
+	"github.com/joho/godotenv"
+)
+
+func is_link(text string) string {
+	U, _ := url.Parse(text)
+	if U.Scheme == "" {
+		return ""
+	} else {
+		fmt.Println(U.Scheme)
+		fmt.Println(U.Host)
+		if U.Host == "twitter.com" {
+			return "Twitter"
+		} else if U.Host == "v.redd.it" {
+			return "Reddit"
+		} else {
+			return "Unknown"
+		}
+	}
+}
+
+func parse_twitter_url(url string) string {
+	sp := strings.Split(url, "/")
+	id := strings.Split(sp[len(sp)-1], "?")[0]
+	return id
+}
+
+func download_twitter(id int64, client *twitter.Client) string {
+
+	tweet, _, _ := client.Statuses.Show(id, nil)
+
+	// fmt.Println(tweet.ExtendedEntities.Media)
+	media := tweet.ExtendedEntities.Media
+	bit := -1
+	url := ""
+
+	if len(media) > 0 {
+		videoVariants := media[0].VideoInfo.Variants
+		if len(videoVariants) > 0 {
+			// var validVideos map[string]interface{}
+			// find largest bitrate
+
+			for _, vid := range videoVariants {
+				if vid.Bitrate > bit {
+					bit = vid.Bitrate
+					url = vid.URL
+				}
+			}
+		} else {
+			fmt.Println("No videos")
+		}
+	} else {
+		fmt.Println("No Media")
+	}
+
+	fmt.Println(url)
+	return url
+
+}
+
+func update(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		fmt.Println(w, "ParseForm error: %v", err)
+		return
+	}
+	fmt.Println(r.Form)
+
+	message := r.Form.Get("message")
+	fmt.Println(message)
+	chat_id := r.Form.Get("chat_id")
+	fmt.Println(chat_id)
+	// text := message.Get("text")
+
+}
+
+func main() {
+	err := godotenv.Load("./.env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	PORT := os.Getenv("PORT")
+	consumerKey := os.Getenv("CONSUMER_KEY")
+	consumerSecret := os.Getenv("CONSUMER_SECRET")
+	accessToken := os.Getenv("ACCESS_TOKEN")
+	accessSecret := os.Getenv("ACCESS_SECRET")
+
+	if PORT == "" {
+		PORT = "5000"
+	}
+
+	config := oauth1.NewConfig(consumerKey, consumerSecret)
+	token := oauth1.NewToken(accessToken, accessSecret)
+
+	httpClient := config.Client(oauth1.NoContext, token)
+	client := twitter.NewClient(httpClient)
+
+	site := is_link("sdadas")
+
+	if site == "Twitter" {
+		id, _ := strconv.ParseInt(parse_twitter_url("text"), 10, 64)
+		fmt.Println(id)
+	} else if site == "Reddit" {
+		// do something
+	}
+
+	fmt.Println(client)
+	http.HandleFunc("/update", update)
+	http.ListenAndServe(":"+PORT, nil)
+
+}
