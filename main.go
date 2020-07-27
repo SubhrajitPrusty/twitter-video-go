@@ -101,7 +101,8 @@ func update(w http.ResponseWriter, r *http.Request) {
 	chatIDInt := int64(chatID)
 	log.Printf("chat_id: %d", chatIDInt)
 	chatIDStr := strconv.FormatInt(chatIDInt, 10)
-	payload.Set("chat_id_str", chatIDStr)
+	log.Printf("chat_id_str : %s", chatIDStr)
+	payload.Set("chat_id", chatIDStr)
 	text := messageMap["text"].(string)
 
 	site := isLink(text)
