@@ -70,16 +70,18 @@ func download_twitter(id int64, client *twitter.Client) string {
 }
 
 func update(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		log.Println(w, "ParseForm error: %v", err)
-		return
+	err := r.ParseForm()
+	if err != nil {
+		log.Println("Error in ParseForm")
+		log.Fatal(err)
 	}
-	log.Println(r.Form)
+	// log.Println(r.Form)
 	log.Println(len(r.Form))
+	log.Println(len(r.PostForm))
 
-	message := r.Form.Get("message")
+	message := r.FormValue("message")
 	log.Println(message)
-	chat_id := r.Form.Get("chat_id")
+	chat_id := r.FormValue("chat_id")
 	log.Println(chat_id)
 	// text := message.Get("text")
 
