@@ -20,8 +20,6 @@ func is_link(text string) string {
 	if U.Scheme == "" {
 		return ""
 	} else {
-		log.Println(U.Scheme)
-		log.Println(U.Host)
 		if U.Host == "twitter.com" {
 			return "Twitter"
 		} else if U.Host == "v.redd.it" {
@@ -39,6 +37,7 @@ func parse_twitter_url(url string) string {
 }
 
 func download_twitter(id int64) string {
+	log.Println(id)
 
 	consumerKey := os.Getenv("CONSUMER_KEY")
 	consumerSecret := os.Getenv("CONSUMER_SECRET")
@@ -61,7 +60,6 @@ func download_twitter(id int64) string {
 	if len(media) > 0 {
 		videoVariants := media[0].VideoInfo.Variants
 		if len(videoVariants) > 0 {
-			// var validVideos map[string]interface{}
 			// find largest bitrate
 
 			for _, vid := range videoVariants {
@@ -104,7 +102,6 @@ func update(w http.ResponseWriter, r *http.Request) {
 	chat_id := chatMap["id"]
 	log.Println(chat_id)
 	text := messageMap["text"].(string)
-	log.Printf("TEXT: %s", text)
 
 	site := is_link(text)
 
