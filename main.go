@@ -16,29 +16,30 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func is_link(text string) string {
+func isLink(text string) string {
 	U, _ := url.Parse(text)
 	if U.Scheme == "" {
 		return ""
-	} else {
-		if U.Host == "twitter.com" {
-			return "Twitter"
-		} else if U.Host == "v.redd.it" {
-			return "Reddit"
-		} else {
-			return "Unknown"
-		}
 	}
+
+	if U.Host == "twitter.com" {
+		return "Twitter"
+	} else if U.Host == "v.redd.it" {
+		return "Reddit"
+	} else {
+		return "Unknown"
+	}
+
 }
 
-func parse_twitter_url(url string) string {
+func parseTwitterURL(url string) string {
 	sp := strings.Split(url, "/")
 	id := strings.Split(sp[len(sp)-1], "?")[0]
 	// log.Printf("Str id : %s", id)
 	return id
 }
 
-func download_twitter(id int64) string {
+func downloadTwitter(id int64) string {
 
 	consumerKey := os.Getenv("CONSUMER_KEY")
 	consumerSecret := os.Getenv("CONSUMER_SECRET")
@@ -102,20 +103,18 @@ func update(w http.ResponseWriter, r *http.Request) {
 	payload.Set("chat_id", strconv.FormatInt(chatIDInt, 10))
 	text := messageMap["text"].(string)
 
-	site := is_link(text)
+	site := isLink(text)
 
 	if site == "Twitter" {
-		id, _ := strconv.ParseInt(parse_twitter_url(text), 10, 64)
-		url := download_twitter(id)
+		id, _ := strconv.ParseInt(parseTwitterURL(text), 10, 64)
+		url := downloadTwitter(id)
 		payload.Set("text", url)
-		log.Println(URL)
 		resp, errr := http.PostForm(URL+"sendMessage", payload)
 		if errr != nil {
 			log.Fatal(errr)
 		}
 		log.Println(resp.StatusCode)
-		log.Println(ioutil.ReadAll(resp.Body))
-		log.Printf("Output URL : %s", url)
+		// log.Printf("Output URL : %s", url)
 	} else if site == "Reddit" {
 		// do something
 	}
