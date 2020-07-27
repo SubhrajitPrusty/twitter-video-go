@@ -80,13 +80,11 @@ func download_twitter(id int64) string {
 }
 
 func update(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
-	if err != nil {
-		log.Println("Error in ParseForm")
-		log.Fatal(err)
-	}
+	token := os.Getenv("TOKEN")
+	URL := "https://api.telegram.org/bot" + token + "/"
 
-	// try body
+	payload := url.Values{}
+
 	jsonMap := make(map[string](interface{}))
 	byteBody, _ := ioutil.ReadAll(r.Body)
 	err = json.Unmarshal([]byte(byteBody), &jsonMap)
@@ -98,17 +96,19 @@ func update(w http.ResponseWriter, r *http.Request) {
 
 	messageMap := jsonMap["message"].(map[string]interface{})
 	chatMap := messageMap["chat"].(map[string]interface{})
-	chatID := chatMap["id"]
+	chatID := chatMap["id"].(string)
 	log.Printf("chat_id: %d", chatID)
+	payload.Set("chat_id", chatID)
 	text := messageMap["text"].(string)
 
 	site := is_link(text)
 
 	if site == "Twitter" {
 		id, _ := strconv.ParseInt(parse_twitter_url(text), 10, 64)
-		log.Printf("Tweet id : %d", id)
 		url := download_twitter(id)
 		log.Printf("Output URL : %s", url)
+		payload.Set("text", url)
+		http.PostForm(URL+"sendMessage", payload)
 	} else if site == "Reddit" {
 		// do something
 	}
