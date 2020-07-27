@@ -34,7 +34,7 @@ func is_link(text string) string {
 func parse_twitter_url(url string) string {
 	sp := strings.Split(url, "/")
 	id := strings.Split(sp[len(sp)-1], "?")[0]
-	log.Printf("Str id : %s", id)
+	// log.Printf("Str id : %s", id)
 	return id
 }
 
@@ -97,8 +97,9 @@ func update(w http.ResponseWriter, r *http.Request) {
 	messageMap := jsonMap["message"].(map[string]interface{})
 	chatMap := messageMap["chat"].(map[string]interface{})
 	chatID := chatMap["id"].(float64)
-	log.Printf("chat_id: %f", chatID)
-	payload.Set("chat_id", strconv.FormatFloat(chatID, 'E', -1, 64))
+	chatIDInt := int64(chatID)
+	log.Printf("chat_id: %d", chatIDInt)
+	payload.Set("chat_id", strconv.FormatInt(chatIDInt, 10))
 	text := messageMap["text"].(string)
 
 	site := is_link(text)
@@ -107,12 +108,13 @@ func update(w http.ResponseWriter, r *http.Request) {
 		id, _ := strconv.ParseInt(parse_twitter_url(text), 10, 64)
 		url := download_twitter(id)
 		payload.Set("text", url)
+		log.Println(URL)
 		resp, errr := http.PostForm(URL+"sendMessage", payload)
 		if errr != nil {
 			log.Fatal(errr)
 		}
 		log.Println(resp.StatusCode)
-		log.Println(URL)
+		log.Println(ioutil.ReadAll(resp.Body))
 		log.Printf("Output URL : %s", url)
 	} else if site == "Reddit" {
 		// do something
