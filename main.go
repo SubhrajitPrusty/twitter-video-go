@@ -112,6 +112,7 @@ func update(w http.ResponseWriter, r *http.Request) {
 			log.Fatal(errr)
 		}
 		log.Println(resp.StatusCode)
+		log.Println(URL)
 		log.Printf("Output URL : %s", url)
 	} else if site == "Reddit" {
 		// do something
