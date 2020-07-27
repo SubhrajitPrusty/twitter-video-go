@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -19,8 +18,8 @@ func is_link(text string) string {
 	if U.Scheme == "" {
 		return ""
 	} else {
-		fmt.Println(U.Scheme)
-		fmt.Println(U.Host)
+		log.Println(U.Scheme)
+		log.Println(U.Host)
 		if U.Host == "twitter.com" {
 			return "Twitter"
 		} else if U.Host == "v.redd.it" {
@@ -41,7 +40,7 @@ func download_twitter(id int64, client *twitter.Client) string {
 
 	tweet, _, _ := client.Statuses.Show(id, nil)
 
-	// fmt.Println(tweet.ExtendedEntities.Media)
+	// log.Println(tweet.ExtendedEntities.Media)
 	media := tweet.ExtendedEntities.Media
 	bit := -1
 	url := ""
@@ -59,39 +58,40 @@ func download_twitter(id int64, client *twitter.Client) string {
 				}
 			}
 		} else {
-			fmt.Println("No videos")
+			log.Println("No videos")
 		}
 	} else {
-		fmt.Println("No Media")
+		log.Println("No Media")
 	}
 
-	fmt.Println(url)
+	log.Println(url)
 	return url
 
 }
 
 func update(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
-		fmt.Println(w, "ParseForm error: %v", err)
+		log.Println(w, "ParseForm error: %v", err)
 		return
 	}
-	fmt.Println(r.Form)
+	log.Println(r.Form)
 
 	message := r.Form.Get("message")
-	fmt.Println(message)
+	log.Println(message)
 	chat_id := r.Form.Get("chat_id")
-	fmt.Println(chat_id)
+	log.Println(chat_id)
 	// text := message.Get("text")
 
 }
 
 func main() {
-	err := godotenv.Load("./.env")
+	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
 	PORT := os.Getenv("PORT")
+	log.Println(PORT)
 	consumerKey := os.Getenv("CONSUMER_KEY")
 	consumerSecret := os.Getenv("CONSUMER_SECRET")
 	accessToken := os.Getenv("ACCESS_TOKEN")
@@ -111,12 +111,12 @@ func main() {
 
 	if site == "Twitter" {
 		id, _ := strconv.ParseInt(parse_twitter_url("text"), 10, 64)
-		fmt.Println(id)
+		log.Println(id)
 	} else if site == "Reddit" {
 		// do something
 	}
 
-	fmt.Println(client)
+	log.Println(client)
 	http.HandleFunc("/update", update)
 	http.ListenAndServe(":"+PORT, nil)
 
