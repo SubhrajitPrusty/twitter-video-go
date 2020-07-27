@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -102,15 +103,17 @@ func update(w http.ResponseWriter, r *http.Request) {
 	text := messageMap["text"].(string)
 
 	site := is_link(text)
-	log.Println(site)
 
 	if site == "Twitter" {
 		id, _ := strconv.ParseInt(parse_twitter_url("text"), 10, 64)
+		log.Printf("Tweet id : %d", id)
 		url := download_twitter(id)
 		log.Printf("Output URL : %s", url)
 	} else if site == "Reddit" {
 		// do something
 	}
+
+	io.WriteString(w, "hello world")
 
 }
 
