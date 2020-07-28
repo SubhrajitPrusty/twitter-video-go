@@ -17,7 +17,10 @@ import (
 )
 
 func isLink(text string) string {
-	U, _ := url.Parse(text)
+	U, urlParseError := url.Parse(text)
+	if urlParseError != nil {
+		log.Fatal(urlParseError)
+	}
 	if U.Scheme == "" {
 		return ""
 	}
@@ -52,7 +55,10 @@ func downloadTwitter(id int64) string {
 	httpClient := config.Client(oauth1.NoContext, token)
 	client := twitter.NewClient(httpClient)
 
-	tweet, _, _ := client.Statuses.Show(id, nil)
+	tweet, _, statusError := client.Statuses.Show(id, nil)
+	if statusError != nil {
+		log.Fatal(statusError)
+	}
 
 	// log.Println(tweet.ExtendedEntities.Media)
 	media := tweet.ExtendedEntities.Media
@@ -87,7 +93,10 @@ func update(w http.ResponseWriter, r *http.Request) {
 	payload := url.Values{}
 
 	jsonMap := make(map[string](interface{}))
-	byteBody, _ := ioutil.ReadAll(r.Body)
+	byteBody, bodyParseError := ioutil.ReadAll(r.Body)
+	if bodyParseError != nil {
+		log.Fatal(bodyParseError)
+	}
 	err := json.Unmarshal([]byte(byteBody), &jsonMap)
 	if err != nil {
 		log.Println("Error in json")
@@ -111,7 +120,10 @@ func update(w http.ResponseWriter, r *http.Request) {
 	site := isLink(text)
 
 	if site == "Twitter" {
-		id, _ := strconv.ParseInt(parseTwitterURL(text), 10, 64)
+		id, parseError := strconv.ParseInt(parseTwitterURL(text), 10, 64)
+		if parseError != nil {
+			log.Fatal(parseError)
+		}
 		url := downloadTwitter(id)
 		payload.Set("text", url)
 		resp, errr := http.PostForm(URL+"sendMessage", payload)
