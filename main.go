@@ -62,10 +62,12 @@ func downloadTwitter(id int64) string {
 		log.Fatal(statusError)
 	}
 
-	// log.Println(tweet)
-	media := tweet.ExtendedEntities.Media
+	log.Printf("Tweet: %v", tweet)
+	entities := tweet.ExtendedEntities
+	log.Printf("Entities: %v", entities)
+	media := entities.Media
+	log.Printf("Media: %v", media)
 	url := ""
-	log.Printf("Media : %v", media)
 
 	if len(media) > 0 {
 		videoVariants := media[0].VideoInfo.Variants
