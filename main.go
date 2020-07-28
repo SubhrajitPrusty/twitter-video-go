@@ -64,9 +64,14 @@ func downloadTwitter(id int64) string {
 
 	log.Printf("Tweet: %v", tweet)
 	entities := tweet.ExtendedEntities
-	log.Printf("Entities: %v", entities)
+
+	if entities == nil {
+		log.Println("No entities found.")
+		return "No entities found"
+	}
+	// log.Printf("Entities: %v", entities)
 	media := entities.Media
-	log.Printf("Media: %v", media)
+	// log.Printf("Media: %v", media)
 	url := ""
 
 	if len(media) > 0 {
