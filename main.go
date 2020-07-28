@@ -126,6 +126,7 @@ func update(w http.ResponseWriter, r *http.Request) {
 		}
 		log.Println(id)
 		url := downloadTwitter(id)
+		log.Println(url)
 		payload.Set("text", url)
 		resp, messageError := http.PostForm(URL+"sendMessage", payload)
 		if messageError != nil {
