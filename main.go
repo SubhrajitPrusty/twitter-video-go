@@ -55,14 +55,14 @@ func downloadTwitter(id int64) string {
 	httpClient := config.Client(oauth1.NoContext, token)
 	client := twitter.NewClient(httpClient)
 
-	log.Printf("%v\n", client)
+	// log.Printf("%v\n", client)
 
 	tweet, _, statusError := client.Statuses.Show(id, nil)
 	if statusError != nil {
 		log.Fatal(statusError)
 	}
 
-	// log.Println(tweet.ExtendedEntities.Media)
+	log.Println(tweet.ExtendedEntities.Media)
 	media := tweet.ExtendedEntities.Media
 	url := ""
 
@@ -70,6 +70,7 @@ func downloadTwitter(id int64) string {
 		videoVariants := media[0].VideoInfo.Variants
 		if len(videoVariants) > 0 {
 			// find largest bitrate
+			log.Printf("Found %d video variants", len(videoVariants))
 
 			bit := -1
 			for _, vid := range videoVariants {
