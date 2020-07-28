@@ -62,7 +62,7 @@ func downloadTwitter(id int64) string {
 		log.Fatal(statusError)
 	}
 
-	log.Println(tweet.ExtendedEntities.Media)
+	log.Println(tweet)
 	media := tweet.ExtendedEntities.Media
 	url := ""
 
