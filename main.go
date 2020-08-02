@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -19,7 +18,7 @@ import (
 func isLink(text string) string {
 	U, urlParseError := url.Parse(text)
 	if urlParseError != nil {
-		log.Fatal(urlParseError)
+		log.Println(urlParseError)
 	}
 	if U.Scheme == "" {
 		return ""
@@ -27,8 +26,6 @@ func isLink(text string) string {
 
 	if U.Host == "twitter.com" {
 		return "Twitter"
-	} else if U.Host == "v.redd.it" {
-		return "Reddit"
 	} else {
 		return "Unknown"
 	}
@@ -55,11 +52,13 @@ func downloadTwitter(id int64) string {
 	httpClient := config.Client(oauth1.NoContext, token)
 	client := twitter.NewClient(httpClient)
 
+	url := ""
 	// log.Printf("%v\n", client)
 
 	tweet, _, statusError := client.Statuses.Show(id, nil)
 	if statusError != nil {
-		log.Fatal(statusError)
+		log.Println(statusError)
+		url = "Could not load twitter link"
 	}
 
 	log.Printf("Tweet: %v", tweet)
@@ -72,7 +71,6 @@ func downloadTwitter(id int64) string {
 	// log.Printf("Entities: %v", entities)
 	media := entities.Media
 	// log.Printf("Media: %v", media)
-	url := ""
 
 	if len(media) > 0 {
 		videoVariants := media[0].VideoInfo.Variants
@@ -90,9 +88,11 @@ func downloadTwitter(id int64) string {
 			log.Printf("Largest bitrate : %d\n", bit)
 		} else {
 			log.Println("No videos")
+			url = "No videos found"
 		}
 	} else {
 		log.Println("No Media")
+		url = "No media found"
 	}
 
 	return url
@@ -107,11 +107,17 @@ func update(w http.ResponseWriter, r *http.Request) {
 	jsonMap := make(map[string](interface{}))
 	byteBody, bodyParseError := ioutil.ReadAll(r.Body)
 	if bodyParseError != nil {
-		log.Fatal(bodyParseError)
+		log.Println(bodyParseError)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Error in Parsing: " + bodyParseError.Error()))
+		return
 	}
 	err := json.Unmarshal([]byte(byteBody), &jsonMap)
 	if err != nil {
-		log.Println("Error in json")
+		log.Println("Error in json: ", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Error in json: " + err.Error()))
+		return
 	}
 
 	log.Printf("INFO: jsonMap, %s", jsonMap)
@@ -134,7 +140,9 @@ func update(w http.ResponseWriter, r *http.Request) {
 	if site == "Twitter" {
 		id, parseError := strconv.ParseInt(parseTwitterURL(text), 10, 64)
 		if parseError != nil {
-			log.Fatal(parseError)
+			log.Println(parseError)
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Could not convert text to link: " + parseError.Error()))
 		}
 		log.Println(id)
 		url := downloadTwitter(id)
@@ -142,15 +150,15 @@ func update(w http.ResponseWriter, r *http.Request) {
 		payload.Set("text", url)
 		resp, messageError := http.PostForm(URL+"sendMessage", payload)
 		if messageError != nil {
-			log.Fatal(messageError)
+			log.Println(messageError)
+			w.WriteHeader(http.StatusExpectationFailed)
+			w.Write([]byte("Could not send message to user: " + messageError.Error()))
 		}
 		log.Println(resp.StatusCode)
 		// log.Printf("Output URL : %s", url)
-	} else if site == "Reddit" {
-		// do something
+	} else {
+		w.Write([]byte("No link detected"))
 	}
-
-	io.WriteString(w, "hello world")
 
 }
 
