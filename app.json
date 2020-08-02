@@ -1,0 +1,6 @@
+{
+    "name": "twitter-video-go",
+    "description": "Telegram bot to fetch video from twitter status links",
+    "repository": "https://github.com/SubhrajitPrusty/twitter-video-go",
+    "keywords": ["golang", "telegram", "bot", "twitter"]
+}
