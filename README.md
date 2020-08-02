@@ -5,7 +5,47 @@
   </a>
 </p>
 
-> Fetch video from twitter status links
+> Telegram bot to fetch video from twitter status links
+
+## Deploy
+
+You can deploy this to heroku
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/SubhrajitPrusty/twitter-video-go)
+
+You need to provide the following secrets:
+
+```
+> Twitter:
+CONSUMER_KEY
+CONSUMER_TOKEN
+ACCESS_SECRET
+ACCESS_TOKEN
+
+> Telegram
+TOKEN (bot token)
+```
+
+And set the telegram bot callback url to your app url
+
+## Install
+
+If you want to run this locally:
+
+Make sure you have go version 1.12 or newer and [Heroku Toolbelt](https://toolbelt.heroku.com/) installed
+
+```
+$ git clone https://github.com/SubhrajitPrusty/twitter-video-go
+$ cd twitter-video-go
+$ go build -o bin/mybot -v .
+$ heroku local
+```
+> Note: This is not meant for local testing
+
+## Usage
+
+Send a twitter link to the bot in telegram and it will reply with the downloadable video link
+
 
 ## Author
 
