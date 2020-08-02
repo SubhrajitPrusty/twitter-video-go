@@ -1,7 +1,7 @@
 <h1 align="center">Welcome to twitter-video-go 👋</h1>
 <p>
   <a href="https://twitter.com/subhrajit\_" target="_blank">
-    <img alt="Twitter: subhrajit\_" src="https://img.shields.io/twitter/follow/subhrajit\_.svg?style=social" />
+    <img alt="Twitter: subhrajit_" src="https://img.shields.io/twitter/follow/subhrajit_.svg?style=social" />
   </a>
 </p>
 
@@ -12,7 +12,7 @@
 👤 **Subhrajit Prusty**
 
 * Website: http://subhrajitprusty.github.io
-* Twitter: [@subhrajit\_](https://twitter.com/subhrajit\_)
+* Twitter: [@subhrajit\_](https://twitter.com/subhrajit_)
 * Github: [@SubhrajitPrusty](https://github.com/SubhrajitPrusty)
 
 ## Show your support
