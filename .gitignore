@@ -1,3 +1,4 @@
 .env
 *.exe
 bin/*
+vendor/*
