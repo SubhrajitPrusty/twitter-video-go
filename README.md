@@ -1,9 +1,4 @@
-<h1 align="center">Welcome to twitter-video-go 👋</h1>
-<p>
-  <a href="https://twitter.com/subhrajit\_" target="_blank">
-    <img alt="Twitter: subhrajit_" src="https://img.shields.io/twitter/follow/subhrajit_.svg?style=social" />
-  </a>
-</p>
+<h1 align="center">twitter-video-go 🤖</h1>
 
 > Telegram bot to fetch video from twitter status links
 
