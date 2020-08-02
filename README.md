@@ -1,4 +1,4 @@
-<h1 align="center">twitter-video-go 🤖</h1>
+<h1 align="center">twitter-video-go :robot: </h1>
 
 > Telegram bot to fetch video from twitter status links
 
