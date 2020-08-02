@@ -18,7 +18,7 @@ You need to provide the following secrets:
 ```
 > Twitter:
 CONSUMER_KEY
-CONSUMER_TOKEN
+CONSUMER_SECRET
 ACCESS_SECRET
 ACCESS_TOKEN
 
@@ -26,7 +26,10 @@ ACCESS_TOKEN
 TOKEN (bot token)
 ```
 
-And set the telegram bot callback url to your app url
+And set the telegram bot callback URL to your app URL:
+eg: twitter-video-go.herokuapp.com/update
+
+Reload your dyno after changing these values.
 
 ## Install
 
