@@ -142,7 +142,7 @@ func update(w http.ResponseWriter, r *http.Request) {
 		if parseError != nil {
 			log.Println(parseError)
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("Could not convert text to link: " + parseError.Error()))
+			w.Write([]byte("Could not convert text to link; parser error : " + parseError.Error()))
 		}
 		log.Println(id)
 		url := downloadTwitter(id)
@@ -157,7 +157,7 @@ func update(w http.ResponseWriter, r *http.Request) {
 		log.Println(resp.StatusCode)
 		// log.Printf("Output URL : %s", url)
 	} else {
-		w.Write([]byte("No link detected"))
+		w.Write([]byte("No link detected. Link must be a valid twitter link with embedded video."))
 	}
 
 }
